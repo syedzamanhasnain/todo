@@ -1,0 +1,21 @@
+version: "3.2"
+
+services:
+  react-app:
+    build:
+      context: .
+      dockerfile: Dockerfile-server
+    command: npm start
+    ports:
+      - "3005:3005"
+    networks:
+      - appnetworkname
+    volumes:
+      - .:/usr/src/react_boilerplate
+      - /usr/src/react_boilerplate/node_modules
+    env_file:
+      - .env # it will overwrite .env file content
+
+networks:
+  appnetworkname:
+    driver: bridge

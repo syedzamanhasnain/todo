@@ -1,0 +1,49 @@
+@import "../../../assets/scss/_variables";
+
+.todo-wrapper {
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  width: 400px;
+  justify-content: center;
+
+  margin: auto;
+}
+
+
+  .inputTodo{
+  padding: 0.75rem 1.25rem;
+  outline: none;
+  border-top: none;
+  border-left: none;
+  border-right: none;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.125);
+  }
+  .inputEdit{
+    padding: 0;
+    outline: none;
+    border: none;
+    }
+
+
+.trashIcon {
+  visibility: hidden;
+  position: absolute;
+  right: 15px;
+}
+
+.editIcon {
+  visibility: hidden;
+  position: absolute;
+  right: 40px;
+}
+li:hover{ 
+.trashIcon{
+  visibility: inherit;
+  cursor: pointer;
+}
+.editIcon{
+  visibility: inherit;
+  cursor: pointer;
+}
+}
