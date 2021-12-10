@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { DragDropContext,Droppable} from 'react-beautiful-dnd';
 import "../TodoApp/style.scss";
 
 function TodoApp() {
@@ -115,8 +116,10 @@ function TodoApp() {
           value={todo}
           className="inputTodo"
         ></input>
-
-        <ul className="list-group list-group-flush">
+      <DragDropContext>
+      <Droppable droppableId="list">
+      {(provided) => (
+        <ul className="list-group list-group-flush" {...provided.droppableProps} ref={provided.innerRef}>
           {filter === ""
             ? todoList.map((todoData) => (
                 <li className="list-group-item" key={todoData.id}>
@@ -186,7 +189,12 @@ function TodoApp() {
                     )}
                   </li>
                 ))}
-          <li className="list-group-item">
+        </ul>
+      )}
+        </Droppable>
+        </DragDropContext>
+        <ul className="list-group list-group-flush">
+        <li className="list-group-item">
             <span className="countItem">
               
               {todoList.filter((data) => data.completed === false).length} items
@@ -220,7 +228,7 @@ function TodoApp() {
                 Completed
               </button>
             </span>
-          </li>
+          </li> 
         </ul>
       </div>
     </div>
