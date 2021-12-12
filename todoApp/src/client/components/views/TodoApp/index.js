@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { DragDropContext,Droppable} from 'react-beautiful-dnd';
+import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import "../TodoApp/style.scss";
 
 function TodoApp() {
@@ -69,12 +69,12 @@ function TodoApp() {
     // console.log(completeStatus);
     if (completeStatus.completed) {
       completeStatus.completed = false;
-     // setItemCount(itemCount + 1);
+      // setItemCount(itemCount + 1);
 
       console.log(completeStatus);
     } else {
       completeStatus.completed = true;
-     // setItemCount(itemCount - 1);
+      // setItemCount(itemCount - 1);
       // console.log(completeStatus);
     }
     const completedResult = [...todoList];
@@ -91,6 +91,18 @@ function TodoApp() {
     }));
     setTempTodo(resultUpdate);
   };
+
+  //on drop end update the todoo list
+  const handleOnDragEnd=(result)=> {
+    console.log(result);
+    if (!result.destination) return;
+     
+     const items = Array.from(todoList);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+    console.log(items);
+    setTodoList(items);
+  }
 
   const btnAll = () => {
     console.log("btn all clicked");
@@ -116,119 +128,161 @@ function TodoApp() {
           value={todo}
           className="inputTodo"
         ></input>
-      <DragDropContext>
-      <Droppable droppableId="list">
-      {(provided) => (
-        <ul className="list-group list-group-flush" {...provided.droppableProps} ref={provided.innerRef}>
-          {filter === ""
-            ? todoList.map((todoData) => (
-                <li className="list-group-item" key={todoData.id}>
-                  {todoData.edit ? (
-                    <input
-                      value={tempTodo[0].text}
-                      className="inputEdit"
-                      onChange={handleChangeUpdate}
-                      onKeyPress={handleKeypressUpdate}
-                      onClick={handleKeypressUpdate}
-                      autoFocus
-                    ></input>
-                  ) : (
-                    <span>
-                      <span
-                        onDoubleClick={() => completeTodo(todoData.id)}
-                        className={
-                          todoData.completed ? "completed" : "incompleted"
-                        }
-                      >
-                        {todoData.text}
-                      </span>
-                      <i
-                        className="fa fa-pencil-square-o editIcon"
-                        onClick={() => editTodo(todoData.id)}
-                      ></i>
-                      <i
-                        className="fa fa-trash-o trashIcon"
-                        onClick={() => deleteTodo(todoData.id)}
-                      ></i>
-                    </span>
-                  )}
-                </li>
-              ))
-            : todoList
-                .filter((data) => data.completed === filter)
-                .map((todoData) => (
-                  <li className="list-group-item" key={todoData.id}>
-                    {todoData.edit ? (
-                      <input
-                        value={tempTodo[0].text}
-                        className="inputEdit"
-                        onChange={handleChangeUpdate}
-                        onKeyPress={handleKeypressUpdate}
-                        onClick={handleKeypressUpdate}
-                        autoFocus
-                      ></input>
-                    ) : (
-                      <span>
-                        <span
-                          onDoubleClick={() => completeTodo(todoData.id)}
-                          className={
-                            todoData.completed ? "completed" : "incompleted"
-                          }
-                        >
-                          {todoData.text}
-                        </span>
-                        <i
-                          className="fa fa-pencil-square-o editIcon"
-                          onClick={() => editTodo(todoData.id)}
-                        ></i>
-                        <i
-                          className="fa fa-trash-o trashIcon"
-                          onClick={() => deleteTodo(todoData.id)}
-                        ></i>
-                      </span>
-                    )}
-                  </li>
-                ))}
-        </ul>
-      )}
-        </Droppable>
+        <DragDropContext onDragEnd={handleOnDragEnd}  >
+          <Droppable droppableId="list">
+            {(provided) => (
+              <ul
+                className="list-group list-group-flush"
+                {...provided.droppableProps}
+                ref={provided.innerRef}
+              >
+                {filter === ""
+                  ? todoList.map((todoData,index) => (
+                      <Draggable key={todoData.id} draggableId={todoData.id.toString()} index={index}>
+                        {(provided) => (
+                          <li 
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                          className="list-group-item" >
+                            {todoData.edit ? (
+                              <input
+                                value={tempTodo[0].text}
+                                className="inputEdit"
+                                onChange={handleChangeUpdate}
+                                onKeyPress={handleKeypressUpdate}
+                                onClick={handleKeypressUpdate}
+                                autoFocus
+                              ></input>
+                            ) : (
+                              <span>
+                                <span
+                                  onDoubleClick={() =>
+                                    completeTodo(todoData.id)
+                                  }
+                                  className={
+                                    todoData.completed
+                                      ? "completed"
+                                      : "incompleted"
+                                  }
+                                >
+                                  {todoData.text}
+                                </span>
+                                <i
+                                  className="fa fa-pencil-square-o editIcon"
+                                  onClick={() => editTodo(todoData.id)}
+                                ></i>
+                                <i
+                                  className="fa fa-trash-o trashIcon"
+                                  onClick={() => deleteTodo(todoData.id)}
+                                ></i>
+                                
+                              </span>
+                            )}
+                          </li>
+
+                          
+                        )}
+                      </Draggable>
+                    ))
+                  : todoList
+                      .filter((data) => data.completed === filter)
+                      .map((todoData,index) => (
+                        <Draggable key={todoData.id} draggableId={todoData.id.toString()} index={index}>
+                           {(provided) => (
+                        <li className="list-group-item" key={todoData.id}
+                        ref={provided.innerRef}
+                        {...provided.draggableProps}
+                        {...provided.dragHandleProps}>
+                          {todoData.edit ? (
+                            <input
+                              value={tempTodo[0].text}
+                              className="inputEdit"
+                              onChange={handleChangeUpdate}
+                              onKeyPress={handleKeypressUpdate}
+                              onClick={handleKeypressUpdate}
+                              autoFocus
+                            ></input>
+                          ) : (
+                            <span>
+                              <span
+                                onDoubleClick={() => completeTodo(todoData.id)}
+                                className={
+                                  todoData.completed
+                                    ? "completed"
+                                    : "incompleted"
+                                }
+                              >
+                                {todoData.text}
+                              </span>
+                              <i
+                                className="fa fa-pencil-square-o editIcon"
+                                onClick={() => editTodo(todoData.id)}
+                              ></i>
+                              <i
+                                className="fa fa-trash-o trashIcon"
+                                onClick={() => deleteTodo(todoData.id)}
+                              ></i>
+                            </span>
+                          )}
+                        </li>
+                           )}
+                        </Draggable>
+                      ))}
+                      {provided.placeholder}
+              </ul>
+        
+            
+            )}
+          </Droppable>
         </DragDropContext>
-        <ul className="list-group list-group-flush">
-        <li className="list-group-item">
+        <ul className="list-group list-group-flush filter-card">
+          <li className="list-group-item">
             <span className="countItem">
-              
               {todoList.filter((data) => data.completed === false).length} items
               left
             </span>
             <span className="float-right">
               <button
                 type="button"
-               // className="btn btn-outline-primary btn-sm ml-2"
-            className={filter===""?"btn btn-outline-primary btn-sm ml-2 btnActive":"btn btn-outline-primary btn-sm ml-2"}
+                // className="btn btn-outline-primary btn-sm ml-2"
+                className={
+                  filter === ""
+                    ? "btn btn-outline-primary btn-sm ml-2 btnActive"
+                    : "btn btn-outline-primary btn-sm ml-2"
+                }
                 onClick={() => btnAll()}
               >
                 All
               </button>
               <button
                 type="button"
-               // active={filter===false?true:false}
-               // className="btn btn-outline-primary btn-sm ml-2"
-               className={filter===false?"btn btn-outline-primary btn-sm ml-2 btnActive":"btn btn-outline-primary btn-sm ml-2"}
+                // active={filter===false?true:false}
+                // className="btn btn-outline-primary btn-sm ml-2"
+                className={
+                  filter === false
+                    ? "btn btn-outline-primary btn-sm ml-2 btnActive"
+                    : "btn btn-outline-primary btn-sm ml-2"
+                }
                 onClick={() => btnActive()}
               >
                 Active
               </button>
               <button
                 type="button"
-              //  active={filter===true?true:false}
-               // className="btn btn-outline-primary btn-sm ml-2"
-               className={filter===true?"btn btn-outline-primary btn-sm ml-2 btnActive":"btn btn-outline-primary btn-sm ml-2"}
+                //  active={filter===true?true:false}
+                // className="btn btn-outline-primary btn-sm ml-2"
+                className={
+                  filter === true
+                    ? "btn btn-outline-primary btn-sm ml-2 btnActive"
+                    : "btn btn-outline-primary btn-sm ml-2"
+                }
                 onClick={() => btnComplete()}
               >
                 Completed
               </button>
             </span>
-          </li> 
+          </li>
         </ul>
       </div>
     </div>

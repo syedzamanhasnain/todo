@@ -63,3 +63,9 @@ li:hover {
 .btnActive:focus{
   box-shadow: none!important;
 }
+.filter-card{
+  border-bottom: none;
+  border-left: none;
+  border-right: none;
+  border-top: 1px solid rgba(0, 0, 0, 0.125);
+}
